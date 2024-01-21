@@ -1,0 +1,54 @@
+{% extends "home\base.html" %}
+
+{% block start %}
+    <a href="/contact/">
+        Contact
+    </a>
+    |
+    <a href="/about/">
+        About
+    </a>
+    |
+    <a href="/recipes/">
+        Recipes
+    </a>
+    <h1> This is Index Page</h1>
+    <p>
+       <!-- {{peoples}} -->
+       <table class="container">
+        <tr>
+          <th>S.no</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Can Vote</th>
+        </tr>
+        {% for people in peoples %}
+
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{people.name}}</td>
+          <td>{{people.Age}}</td>
+          <td {% if people.Age <= 18 %} style = "background:red" {% else %} style = "background:green" {% endif %}>
+            {% if people.Age >= 18 %}
+                👍
+            {% else %}
+                👎
+            {% endif %}
+          </td> 
+        </tr>
+
+        {% endfor %}
+
+      </table> 
+    </p>
+    <p>
+        {% if "cucumber" in vegetables %}
+            Yes Available
+        {% elif "Tomato" in vegetables %}
+            Yes Available
+        {% else %}
+            Not Available
+        {% endif %}
+    </p>
+
+{% endblock %}

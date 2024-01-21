@@ -1,0 +1,193 @@
+Django Tutorial
+
+Commands:
+
+1) django-admin startproject <project_name> : create a folder with <project name> specified
+
+2) Files that are created in project_name folder are 
+	* __init__.py : to read folder structure. To import or export files in the project folder
+	* asgi.py : asynchronous gateway interface
+	* settings.py :  to add all the settings
+	* urls.py : to map all the urls
+	* wsgi.py :  webserver gateway interface
+
+3) App creation:
+	* python manage.py startapp <app_name>
+	* Apps are basically created for making various functionalities for eg: If we need an accounts section/module in our projects we will create another app with same command above. 
+	* apps have various files in it:
+		- folder-> migrations
+		- __init__.py : to read folder structure. To import or export files in the project folder
+		- admin.py : django inbuilt admin panel, to change or modify it
+		- apps.py 
+		- models.py : related to database for entire app
+		- tests.py
+		- views.py : logical part [imp : for data to send from backend to frontend]
+
+
+Note: When we create a new app we must have to add it to settings.py in INSTALLED_APPS list.
+ 
+
+4) python manage.py runserver : To run server locally
+
+------------------------------------------------------------------------------------------
+NOTES:
+
+views.py: Its the logical part where we write our logics and code. There are two types of views Class Based Views and Function Based Views.
+
+------------------------------------------------------------------------------------------
+
+models.py : define schema for database
+
+5) python manage.py makemigrations: 
+	- This command will create migration file.
+	- First migration file that is generated has a name 0001_initial.py. After that 	when we make any changes in our models.py file and again run this command, then 	each time a new file with 0002_[action_name].py will be generated.
+	- Most imported fields in migration files are "dependencies" and "operations"
+
+6) python manage.py migrate: this command will update the database, checks for any deleted file.
+
+	- django throws error if somefile is present in database but is deleted from the project.
+	- IMP QUESTION: HOW DJANGO KNOWS THAT THEIR IS SOME FILE MISSING FROM THE PROJECT?
+	- ANS: Whenever we enter the above command the django runs all the migration files and create a new state, then it matches this state with state that is present in the database; if some fields are to be updated or removed then that work will be executed, if nothing to be updated then no change takes place and if some file is deleted in current state but present in previous database state, then it gives error.
+
+
+7) python manage.py shell
+(env) PS D:\Django Tut\core> python manage.py shell 
+       
+Python 3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.(InteractiveConsole)
+>>> from home.models import *
+>>> student = Student(name="Harsh", age=21, email="harsh@gmail.com",address="Delhi")
+>>> student
+<Student: Student object (None)>
+>>> student.save()
+>>> student        
+<Student: Student object (1)>
+#NOTE# objects is our model manager, it points out our sqllite database ##
+>>> student = Student.objects.create(name="Rohan", age=21, email="rohan@gmail.com", address="UP")
+>>> student                                               
+<Student: Student object (2)>
+>>> Student.objects.all()
+<QuerySet [<Student: Student object (1)>, <Student: Student object (2)>]>
+>>> Student.objects.all()[0]
+<Student: Student object (1)>
+>>> Student.objects.all()[0].name
+'Harsh'
+>>> Student.objects.all()[0].address
+'Delhi'
+>>> Student.objects.all()[0].address
+'Delhi'
+>>> Student.objects.all()[1].address 
+'UP'
+>>> Student.objects.all()[1].name   
+'Rohan'
+
+--------------------------------------------------------------------------------------------------------
+*CRUD OPERATIONS*
+
+C: Creat
+R: Read
+U: Update
+D: Delete
+
+C: Create
+##Different ways to create objects or data in DB
+
+(env) PS D:\Django Tut\core> python manage.py shell       
+Python 3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.(InteractiveConsole)
+>>> from home.models import *
+>>> car = Car()
+>>> car.save()
+>>> car       
+<Car: Car object (1)>
+>>> car = Car(car_name = "Nexon", speed=110)  //METHOD 1
+>>> car.save()
+>>> car
+<Car: Car object (2)>
+>>> car = Car(car_name = "Thar", speed=180)    
+>>> car
+<Car: Car object (None)>
+>>> car.save()
+>>> car
+<Car: Car object (3)>
+>>> Car.objects.create(car_name="Jeep", speed=160) //METHOD 2
+<Car: Car object (4)>
+>>>    
+>>> car_dict = {"car_name" : "i20", "speed" : 130}  //METHOD 3
+>>> car_dict                                       
+{'car_name': 'i20', 'speed': 130}
+>>> Car.objects.create(**car_dict)                 
+<Car: Car object (5)>
+
+R: Read
+
+(env) PS D:\Django Tut\core> python manage.py shell
+Python 3.10.4 (tags/v3.10.4:9d38120, Mar 23 2022, 23:13:41) [MSC v.1929 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from home.models import *
+>>> cars = Car.objects.all()
+>>> cars
+<QuerySet [<Car: >, <Car: Nexon>, <Car: Thar>, <Car: Jeep>, <Car: i20>]>
+>>> for car in cars:
+...     print(car)
+...
+Nexon
+Thar
+Jeep
+i20
+>>> for car in cars:                                      
+...     print(f"The car name is {car.car_name} with high speed of {car.speed}" ) 
+...
+The car name is  with high speed of 40
+The car name is Nexon with high speed of 110
+The car name is Thar with high speed of 180
+The car name is Jeep with high speed of 160
+The car name is i20 with high speed of 130
+>>> car = Car.objects.get(id=1)
+>>> car
+<Car: >
+>>> car = Car.objects.get(id=2) 
+>>> car
+<Car: Nexon>
+
+*** NOTE: The below statement, if id=10 not exist in db then filter will create new object with id=10 ***
+
+>>> car = Car.objects.filter(id=10)
+>>> car
+<QuerySet []>
+
+
+U: Update
+
+>>> car = Car.objects.get(id=1)
+>>> car.car_name = "Creata"
+>>> car.speed = 170
+>>> car.save()
+>>> car
+<Car: Creata>
+>>> Car.objects.all() 
+<QuerySet [<Car: Creata>, <Car: Nexon>, <Car: Thar>, <Car: Jeep>, <Car: i20>]>
+>>> Car.objects.filter(id=1).update(car_name = "Creata Dark Edition Limited")
+1
+>>> Car.objects.all()                                     
+<QuerySet [<Car: Creata Dark Edition Limited>, <Car: Nexon>, <Car: Thar>, <Car: Jeep>, <Car: i20>]>
+
+
+D: Delete
+
+>>> Car.objects.all()                                     
+<QuerySet [<Car: Creata Dark Edition Limited>, <Car: Nexon>, <Car: Thar>, <Car: Jeep>, <Car: i20>]>
+>>> Car.objects.get(id=1).delete()
+(1, {'home.Car': 1})
+>>> Car.objects.all()
+<QuerySet [<Car: Nexon>, <Car: Thar>, <Car: Jeep>, <Car: i20>]>
+>>> Car.objects.get(id=3).delete()                        
+(1, {'home.Car': 1})
+>>> Car.objects.all()
+<QuerySet [<Car: Nexon>, <Car: Jeep>, <Car: i20>]> 
+
+IMP: TO delete all the data---> Car.objects.all().delete()
+
+
+kn193841
