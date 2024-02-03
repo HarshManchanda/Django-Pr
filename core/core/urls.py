@@ -36,6 +36,8 @@ urlpatterns = [
     path('about/', about, name='About'),
     path('success-page/',success_page,name="success_page"),
     path('admin/', admin.site.urls),
+    path('students/', get_student, name='get_student'),
+    path('see_marks/<student_id>', see_marks, name='see_marks'),    
 ]
 
 if settings.DEBUG:

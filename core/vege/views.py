@@ -16,6 +16,12 @@ from django.contrib.auth import authenticate , login, logout
 #Django decorator for authenticate recipes page only to user that login
 from django.contrib.auth.decorators import login_required
 
+#Djanog Paginator for pagination
+from django.core.paginator import Paginator
+
+#Django Q -> Use for filter in search for student. It helps in or statement so that we can implement multiple search query.
+from django.db.models import Q, Sum
+
 # Create your views here.
 
 @login_required(login_url="/login/")
@@ -124,3 +130,36 @@ def register(request):
         return redirect('/register/')
 
     return render(request, 'register.html')
+
+def get_student(request):
+    queryset = Student.objects.all()
+
+    if request.GET.get('search'):
+        search = request.GET.get('search')
+        queryset = queryset.filter(
+            Q(student_name__icontains = search) |
+            Q(student_id__student_id__icontains = search) |
+            Q(department__department__icontains = search) |
+            Q(student_email__icontains = search) |
+            Q(student_age__icontains = search)
+        )
+
+
+    paginator = Paginator(queryset, 10)  # Show 25 contacts per page.
+    page_number = request.GET.get("page",1)
+    page_obj = paginator.get_page(page_number)
+
+    # print(page_obj.object_list)
+
+    return render(request, 'report/students.html', {'queryset': page_obj})
+
+from .seed import generate_report_card
+
+def see_marks(request, student_id):
+    # generate_report_card() 
+    # Above Function is present in seed.py we use to for generating rank data. 
+    
+    queryset = SubjectMarks.objects.filter(student__student_id__student_id = student_id)
+    total_marks = queryset.aggregate(total_marks = Sum('marks'))
+    
+    return render(request, 'report/see_marks.html', {'queryset':queryset, 'total_marks' : total_marks})
