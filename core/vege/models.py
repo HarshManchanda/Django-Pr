@@ -2,6 +2,13 @@ from django.db import models
 #Django user model for authentication
 from django.contrib.auth.models import User
 
+#Since in accounts we have created a custom user model we need to delete all migrations and db
+#Also to use that model we need to add get_user_model from django.contrib.auth
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
 # Create your models here.
 
 class Recipe(models.Model):
