@@ -22,6 +22,13 @@ from django.core.paginator import Paginator
 #Django Q -> Use for filter in search for student. It helps in or statement so that we can implement multiple search query.
 from django.db.models import Q, Sum
 
+#Since in accounts we have created a custom user model we need to delete all migrations and db
+#Also to use that model we need to add get_user_model from django.contrib.auth
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 # Create your views here.
 
 @login_required(login_url="/login/")
