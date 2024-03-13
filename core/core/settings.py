@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+''' 
+For making accounts CustomUser model as primary for django
+user
+'''
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 

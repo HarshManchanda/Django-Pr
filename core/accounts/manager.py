@@ -1,3 +1,6 @@
+'''We create manager.py for adding fields in create_superuser for 
+creating user which we created in models.py of accounts app.
+'''
 from django.contrib.auth.base_user import BaseUserManager
 
 
