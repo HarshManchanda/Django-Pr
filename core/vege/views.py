@@ -4,6 +4,7 @@ from django.http import HttpResponse
 
 #import user models for authentication
 from django.contrib.auth.models import User
+# Since we have created new Usermodel so alone this line will throw error so we use get_user_model in line 29
 
 #To flash messages in django we have messages we can search on google by django message
 from django.contrib import messages
